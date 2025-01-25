@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      target: build
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - $PORT:$PORT
+    depends_on:
+      - db
+    command: npm run dev
+  db:
+    container_name: postgres
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - $DB_PORT:$DB_PORT
+    volumes:
+      - data:/var/lib/postgres/data
+    environment:
+      - POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=$DB_NAME
+  redis:
+    container_name: redis
+    image: redis
+    restart: unless-stopped
+    ports:
+      - $REDIS_PORT:$REDIS_PORT
+volumes:
+  data:
